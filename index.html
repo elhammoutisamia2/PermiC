@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Test Permiso C - Camión Rígido</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #eff6ff;
+            --accent: #3b82f6;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --bg-main: #f8fafc;
+            --success: #10b981;
+            --success-bg: #ecfdf5;
+            --danger: #ef4444;
+            --danger-bg: #fef2f2;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-main);
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .quiz-container {
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 520px;
+            padding: 24px;
+            box-sizing: border-box;
+            border: 1px solid #e2e8f0;
+        }
+
+        .header-app {
+            margin-bottom: 20px;
+        }
+
+        .header-app h1 {
+            font-size: 1.25rem;
+            color: var(--text-dark);
+            margin: 0 0 8px 0;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 5%;
+            background: linear-gradient(90deg, var(--accent), #2563eb);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .visual-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+
+        .question-image {
+            width: 100%;
+            border-radius: 10px;
+            display: block;
+            object-fit: cover;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            font-weight: 600;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-item {
+            background-color: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 0.95rem;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            line-height: 1.4;
+            position: relative;
+            font-weight: 500;
+        }
+
+        .option-item:hover {
+            border-color: #cbd5e1;
+            background-color: #f8fafc;
+            transform: translateY(-1px);
+        }
+
+        .option-item.correct-state {
+            background-color: var(--success-bg) !important;
+            border-color: var(--success) !important;
+            color: #065f46 !important;
+            font-weight: 600;
+        }
+
+        .option-item.correct-state::after {
+            content: "✓";
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        .option-item.wrong-state {
+            background-color: var(--danger-bg) !important;
+            border-color: var(--danger) !important;
+            color: #991b1b !important;
+        }
+
+        .option-item.wrong-state::after {
+            content: "✗";
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--danger);
+            font-weight: 700;
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: linear-gradient(180deg, #2563eb, var(--primary));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            display: none;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.95;
+            transform: translateY(-1px);
+        }
+
+        .result-box {
+            text-align: center;
+            display: none;
+            padding: 10px 0;
+        }
+
+        .score-badge {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 20px auto;
+            color: var(--text-dark);
+            border: 4px solid #ffffff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .restart-btn {
+            background: linear-gradient(180deg, #10b981, #059669);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div id="quiz-box">
+        <div class="header-app">
+            <h1>Examen Permis C (Camión)</h1>
+            <div class="progress-container">
+                <div class="progress-bar" id="bar-fill"></div>
+            </div>
+            <div class="progress-text" id="progress-lbl">Pregunta 1 de 20</div>
+        </div>
+        
+        <div class="visual-card">
+            <img id="quiz-img" src="" alt="Imagen del examen" class="question-image">
+        </div>
+
+        <div class="question-text" id="question-html">Cargando pregunta...</div>
+        
+        <div class="options-list" id="options-html"></div>
+
+        <button class="btn-primary" id="btn-next" onclick="nextStep()">Siguiente Pregunta</button>
+    </div>
+
+    <div id="result-box" class="result-box">
+        <h2 style="margin: 0; color: var(--text-dark);">📊 Resultado del Test</h2>
+        <div class="score-badge" id="score-lbl">0/20</div>
+        <p id="status-text" style="font-weight: 600; font-size: 1.05rem; margin-bottom: 25px;"></p>
+        <button class="restart-btn" onclick="resetTest()">Repetir Examen</button>
+    </div>
+</div>
+
+<script>
+    const db = [
+        {
+            q: "1. El conductor de un vehículo pesado advierte que pretende adelantarle un turismo y no hay situación de riesgo. ¿Qué debe hacer?",
+            o: [
+                "A) Si es posible ceñirse al borde derecho de la calzada, y si no lo es, indicar la posibilidad de ser adelantado con el intermitente derecho o moviendo el brazo.",
+                "B) Aumentar la velocidad para no entorpecer la marcha del turismo.",
+                "C) Reducir la velocidad bruscamente para obligar al turismo a adelantar rápido."
+            ],
+            c: 0
+        },
+        {
+            q: "2. ¿Cada cuánto tiempo deben pasar inspecciones técnicas periódicas (ITV) los vehículos de más de 3.500 kg de masa máxima autorizada (MMA) dedicados al transporte de mercancías?",
+            o: [
+                "A) Cada dos años durante los primeros seis años.",
+                "B) Hasta 10 años anual, y con más de 10 años semestral (cada 6 meses).",
+                "C) Exentos los primeros 4 años, luego anual."
+            ],
+            c: 1
+        },
+        {
+            q: "3. ¿Qué sustancias pueden producir efectos parecidos al consumo de alcohol?",
+            o: [
+                "A) El café o el té cargado.",
+                "B) El consumo de ciertos medicamentos.",
+                "C) Las bebidas energéticas únicamente."
+            ],
+            c: 1
+        },
+        {
+            q: "4. Si conduce por una autovía fuera de poblado con dos carriles para cada sentido un camión con longitud total de 11 metros, ¿qué separación mínima debe guardar con el vehículo que le precede al que no pretende adelantar?",
+            o: [
+                "A) 50 metros obligatorios.",
+                "B) La que me permita en caso de frenado brusco detenerse sin colisionar con el vehículo que va delante.",
+                "C) 100 metros como mínimo por tratarse de un vehículo pesado."
+            ],
+            c: 1
+        },
+        {
+            q: "5. Circula con un camión que arrastra un remolque ligero. ¿Qué documentos de los vehículos debe llevar?",
+            o: [
+                "A) Solo el permiso de conducción del conductor.",
+                "B) Permiso de circulación del camión y tarjeta de inspección técnica del remolque y del camión.",
+                "C) El permiso de circulación del remolque únicamente."
+            ],
+            c: 1
+        },
+        {
+            q: "6. Si el camión que conduce dispone de dos ejes simples, la masa máxima que podrá cargar sobre el eje no motor será de:",
+            o: [
+                "A) 10 toneladas.",
+                "B) 11,5 toneladas.",
+                "C) 9 toneladas."
+            ],
+            c: 0
+        },
+        {
+            q: "7. Para estacionar correctamente el camión que conduce de 6.000 kg de masa máxima autorizada en una pendiente del 8% bastará con:",
+            o: [
+                "A) Dejar puesta la primera marcha si es cuesta abajo.",
+                "B) Colocar piedras debajo de las ruedas delanteras.",
+                "C) Dejar accionado el freno de estacionamiento, dejar colocada la velocidad que proceda y además calzar correctamente el vehículo."
+            ],
+            c: 2
+        },
+        {
+            q: "8. Si conduce un camión de más de 3.500 kg de masa máxima autorizada, debe saber que en las operaciones de carga y descarga:",
+            o: [
+                "A) Se pueden dejar las mercancías en la acera provisionalmente si no molestan.",
+                "B) Se puede ocupar toda la calzada si es por poco tiempo.",
+                "C) Está prohibido depositar las mercancías en la vía pública por lo que deben ser llevadas directamente del inmueble al vehículo o a la inversa."
+            ],
+            c: 2
+        },
+        {
+            q: "9. Si la anchura del camión que conduce es superior a 2,10 metros, debe saber que las luces de gálibo son:",
+            o: [
+                "A) Opcionales si circula de día.",
+                "B) Siempre obligatorias.",
+                "C) Obligatorias solo si mide más de 6 metros de largo."
+            ],
+            c: 1
+        },
+        {
+            q: "10. Como norma general, ¿puede circular por un carril adicional circunstancial conduciendo un camión de 7.500 kg de masa máxima autorizada?",
+            o: [
+                "A) Pues sí.",
+                "B) No, está prohibido para camiones de más de 3.500 kg.",
+                "C) Solo si transporta mercancías peligrosas."
+            ],
+            c: 0
+        },
+        {
+            q: "11. Conduce un furgón de más de 3.500 kg de masa máxima autorizada. A la vista de esta señal, debe saber que:",
+            o: [
+                "A) Es una señal que prohíbe el paso a camiones.",
+                "B) Es una señal de consejo de velocidad.",
+                "C) Deberá circular por la calzada a cuya entrada está situada la señal (obligación)."
+            ],
+            c: 2
+        },
+        {
+            q: "12. Si conduce un camión de 7.500 kg de masa máxima autorizada que transporta mercancías con fines comerciales, con respecto al uso del tacógrafo debe saber que el periodo de descanso diario:",
+            o: [
+                "A) Podrá ampliarse para transformarse en un periodo de descanso semanal normal o reducido.",
+                "B) Debe ser obligatoriamente de 15 horas ininterrumpidas.",
+                "C) No se puede modificar bajo ninguna circunstancia."
+            ],
+            c: 0
+        },
+        {
+            q: "13. Un camión debe llevar luces de posición laterales:",
+            o: [
+                "A) Siempre que tenga más de 2 metros de ancho.",
+                "B) Si cuando la longitud del camión sea superior a 6 metros.",
+                "C) Solo si lleva un remolque pesado enganchado."
+            ],
+            c: 1
+        },
+        {
+            q: "14. Conduce fuera de poblado un camión por una carretera señalizada con vía para automóviles. ¿Qué velocidad máxima no podrá rebasar?",
+            o: [
+                "A) 80 km/h.",
+                "B) 90 km/h.",
+                "C) 70 km/h."
+            ],
+            c: 0
+        },
+        {
+            q: "15. La normativa Europea de transporte por carretera relativa a tiempos de conducción y descanso no será de aplicación en:",
+            o: [
+                "A) En la conducción de vehículos especiales utilizados con fines médicos.",
+                "B) En camiones frigoríficos comerciales.",
+                "C) En cualquier vehículo pesado de más de 12 toneladas."
+            ],
+            c: 0
+        },
+        {
+            q: "16. ¿Debe usted revisar el nivel de líquido refrigerante del sistema de refrigeración del motor de su camión?",
+            o: [
+                "A) No, el sistema está sellado y no se revisa.",
+                "B) Sí, debe estar entre las marcas del máximo y el mínimo.",
+                "C) Solo se revisa una vez al año en el taller."
+            ],
+            c: 1
+        },
+        {
+            q: "17. ¿Qué indica la palabra 'Tubeless' escrita en el lateral del neumático?",
+            o: [
+                "A) Que es un neumático de invierno.",
+                "B) Que es un neumático preparado para ser montado sin cámara.",
+                "C) Que tiene la banda de rodadura reforzada."
+            ],
+            c: 1
+        },
+        {
+            q: "18. ¿Qué caracteriza a las lámparas de xenón?",
+            o: [
+                "A) Que funcionan a una tensión de unos 20.000 voltios.",
+                "B) Que consumen más energía que las lámparas tradicionales.",
+                "C) Que producen una luz de color amarillo selectivo."
+            ],
+            c: 0
+        },
+        {
+            q: "19. La luz que producen las lámparas del circuito de alumbrado debe ser proyectada por el faro:",
+            o: [
+                "A) Hacia arriba para ver los carteles de la autovía.",
+                "B) En la dirección y características necesarias para que la iluminación sea efectiva.",
+                "C) Únicamente hacia el lado derecho de la calzada."
+            ],
+            c: 1
+        },
+        {
+            q: "20. Al cambiar un fusible fundido por otro, ¿qué debe tener en cuenta principalmente?",
+            o: [
+                "A) Que el nuevo sea de un tamaño mucho más grande.",
+                "B) Que el nuevo tenga el mismo voltaje y amperaje que el que se ha fundido.",
+                "C) Que sea de un color diferente para identificarlo rápido."
+            ],
+            c: 1
+        }
+    ];
+
+    let step = 0;
+    let points = 0;
+    let blocked = false;
+
+    function renderQuestion() {
+        blocked = false;
+        document.getElementById("btn-next").style.display = "none";
+        
+        const data = db[step];
+        
+        // Progress UI
+        document.getElementById("progress-lbl").innerText = `Pregunta ${step + 1} de ${db.length}`;
+        document.getElementById("bar-fill").style.width = `${((step + 1) / db.length) * 100}%`;
+        
+        // Image Dynamic Load
+        document.getElementById("quiz-img").src = `img/${step + 1}.jpeg`;
+        
+        // Text Content
+        document.getElementById("question-html").innerText = data.q;
+        
+        // Render Options
+        const box = document.getElementById("options-html");
+        box.innerHTML = "";
+        
+        data.o.forEach((txt, idx) => {
+            const btn = document.createElement("button");
+            btn.className = "option-item";
+            btn.innerText = txt;
+            btn.onclick = () => checkAnswer(idx, btn);
+            box.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(chosen, el) {
+        if (blocked) return;
+        blocked = true;
+        
+        const data = db[step];
+        const all = document.querySelectorAll(".option-item");
+        
+        if (chosen === data.c) {
+            el.classList.add("correct-state");
+            points++;
+        } else {
+            el.classList.add("wrong-state");
+            all[data.c].classList.add("correct-state");
+        }
+        
+        document.getElementById("btn-next").style.display = "block";
+        if (step === db.length - 1) {
+            document.getElementById("btn-next").innerText = "Terminar y Ver Nota";
+        }
+    }
+
+    function nextStep() {
+        if (step < db.length - 1) {
+            step++;
+            renderQuestion();
+        } else {
+            endTest();
+        }
+    }
+
+    function endTest() {
+        document.getElementById("quiz-box").style.display = "none";
+        document.getElementById("result-box").style.display = "block";
+        
+        const lbl = document.getElementById("score-lbl");
+        lbl.innerText = `${points} / ${db.length}`;
+        
+        const txt = document.getElementById("status-text");
+        const fails = db.length - points;
+        
+        if (fails <= 2) {
+            txt.innerText = "¡APROBADO! 🎉 Aptitud perfecta para el examen real.";
+            txt.style.color = "var(--success)";
+        } else {
+            txt.innerText = `SUSPENDIDO (Tienes ${fails} fallos). El límite son 2 fallos. ¡Sigue repasando!`;
+            txt.style.color = "var(--danger)";
+        }
+    }
+
+    function resetTest() {
+        step = 0;
+        points = 0;
+        document.getElementById("btn-next").innerText = "Siguiente Pregunta";
+        document.getElementById("quiz-box").style.display = "block";
+        document.getElementById("result-box").style.display = "none";
+        renderQuestion();
+    }
+
+    // Launch
+    renderQuestion();
+</script>
+
+</body>
+</html>
